@@ -17,10 +17,16 @@ class Mysql <Formula
       ['--client-only', "Only install client tools, not the server."],
     ]
   end
+  
+  def patches
+    {:p1 => ["http://gist.github.com/raw/179616/bcbc9f185bbd353934c9379a253d23269c65170e/Diff"]}
+  end
 
   def install
     ENV['CXXFLAGS'] = ENV['CXXFLAGS'].gsub "-fomit-frame-pointer", ""
     ENV['CXXFLAGS'] += " -fno-omit-frame-pointer -felide-constructors"
+    
+    var = "#{HOMEBREW_PREFIX}/var/mysql"
 
     configure_args = [
       "--without-bench",
@@ -28,6 +34,7 @@ class Mysql <Formula
       "--without-debug",
       "--disable-dependency-tracking",
       "--prefix=#{prefix}",
+      "--localstatedir=#{var}",
       "--with-plugins=innobase,myisam",
       "--with-extra-charsets=complex",
       "--with-plugins=innobase,myisam",
@@ -49,5 +56,38 @@ class Mysql <Formula
 
     # save 66MB!
     (prefix+'mysql-test').rmtree unless ARGV.include? '--with-tests'
+    
+    Pathname.new(var).mkpath
+    
+    File.open("#{prefix}/com.mysql.mysqld.plist", 'w') {|f| f.write(startup_plist)}
+      
+    puts "------------------------------------------------------"
+    puts "Set up databases with `mysql_install_db`"
+    puts "Automatically load on login with "
+    puts "  `launchctl load -w #{prefix}/com.mysql.mysqld.plist`"
+    puts "------------------------------------------------------"
+  end
+  
+  def startup_plist
+    return <<"EOPLIST"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>KeepAlive</key>
+  <true/>
+  <key>Label</key>
+  <string>com.mysql.mysqld</string>
+  <key>Program</key>
+  <string>#{HOMEBREW_PREFIX}/bin/mysqld_safe</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>UserName</key>
+  <string>#{`whoami`}</string>
+  <key>WorkingDirectory</key>
+  <string>/usr/local</string>
+</dict>
+</plist>
+EOPLIST
   end
 end
