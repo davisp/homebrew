@@ -19,4 +19,12 @@ class Znc <Formula
     system "./configure", "--prefix=#{prefix}", "--disable-perl"
     system "make install"
   end
+
+  def caveats
+    "Modules don't load at runtime, with 'Symbol not found'.\n"+
+    "If you can figure out how why, let me know at github.com/indirect"
+    # Unable to load module [away] [dlopen(/usr/local/Cellar/znc/0.074/lib/znc/away.so, 6): Symbol not found: __ZN7CModule10ListTimersEv
+    # Referenced from: /usr/local/Cellar/znc/0.074/lib/znc/away.so
+    # Expected in: flat namespace
+  end
 end
