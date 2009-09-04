@@ -46,14 +46,16 @@ cflags=%w[-O3]
 if MACOS_VERSION >= 10.6
   case Hardware.intel_family
   when :penryn
-    cflags<<'-march=core2'<<'-msse4.1'
+    cflags<<'-march=core2'<<'-msse4.1'<<'-m64'
+    ENV['LDFLAGS']="-arch x86_64"
   when :core2
-    cflags<<"-march=core2"<<'-msse4'
+    cflags<<"-march=core2"<<'-msse4'<<'-m64'
+    ENV['LDFLAGS']="-arch x86_64"
   when :core1
     cflags<<"-march=prescott"<<'-msse3'
+    ENV['LDFLAGS']=""
   end
-  ENV['LDFLAGS']="-arch x86_64"
-  cflags<<'-m64'<<'-mmmx'
+  cflags<<'-mmmx'
 else
   case Hardware.intel_family
   when :penryn
