@@ -23,5 +23,34 @@ class Postgresql <Formula
 
     system "./configure", *configure_args
     system "make install"
+
+  end
+
+  def caveats
+    puts <<-EOS
+==============================================================
+Suggested next steps:
+
+    * Create a user for postgresql (we'll name it "postgres"). 
+    * Create a databse:
+    
+    $ sudo mkdir -p /var/db/postgresql/defaultdb
+    $ sudo chown postgres /var/db/postgresql/defaultdb
+    $ sudo su postgres -c '/usr/local/bin/initdb -D /var/db/postgresql/defaultdb'
+
+    $ sudo touch /var/log/postgres.log
+    $ sudo chown postgres /var/log/postgres.log
+
+Starting:
+
+    $ sudo su postgres -c "/usr/local/bin/pg_ctl -D /var/db/postgresql/defaultdb start -l /var/log/postgres.log"
+
+Stopping:
+
+    $ sudo su postgres -c "/usr/local/bin/pg_ctl -D /var/db/postgresql/defaultdb stop -s -m fast"
+
+Google around for org.postgresql.plist if you want launchd support.
+==============================================================
+    EOS
   end
 end
