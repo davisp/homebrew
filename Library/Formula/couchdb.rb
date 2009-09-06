@@ -10,11 +10,6 @@ class Couchdb <Formula
      LibraryDep.new 'icu4'
   end
 
-  def patches
-      base = "https://issues.apache.org/jira/secure"
-      ["#{base}/attachment/12418738/no-js-for-driver.patch"]
-  end
-
   def install
     system "./bootstrap"
     system "./configure", "--prefix=#{prefix}", "ERLC_FLAGS=+native"
