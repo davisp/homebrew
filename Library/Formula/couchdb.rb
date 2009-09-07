@@ -14,5 +14,6 @@ class Couchdb <Formula
     system "./bootstrap"
     system "./configure", "--prefix=#{prefix}", "ERLC_FLAGS=+native"
     system "make install"
+    system "mkdir -p #{prefix}/var/{lib,log}/couchdb"
   end
 end
