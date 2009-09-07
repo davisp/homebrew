@@ -14,6 +14,9 @@ class Couchdb <Formula
     system "./bootstrap"
     system "./configure", "--prefix=#{prefix}", "ERLC_FLAGS=+native"
     system "make install"
-    system "mkdir -p #{prefix}/var/{lib,log}/couchdb"
+    system "mkdir -p #{prefix}/var/lib/couchdb"
+    system "mkdir -p #{prefix}/var/log/couchdb"
+    File.open("#{prefix}/var/lib/couchdb/.ignore", 'w') {|f| f.write("")}
+    File.open("#{prefix}/var/log/couchdb/couch.log", 'w') {|f| f.write("")}
   end
 end
