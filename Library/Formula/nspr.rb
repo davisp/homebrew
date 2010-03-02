@@ -8,9 +8,12 @@ class Nspr <Formula
   def install
     require 'hardware'
 
+    ENV.gcc_4_2
     ENV.deparallelize
     Dir.chdir "mozilla/nsprpub" do
-      inreplace "pr/src/Makefile.in", "-framework CoreServices -framework CoreFoundation", "-framework Carbon"
+      frameworks = "-framework Carbon"
+      frameworks = "" if MACOS_VERSION >= 10.6
+      inreplace "pr/src/Makefile.in", "-framework CoreServices -framework CoreFoundation", frameworks
 
       conf = %W[--prefix=#{prefix} --disable-debug --enable-strip --enable-optimize]
       conf << "--enable-64bit" if Hardware.is_64_bit? and MACOS_VERSION >= 10.6
